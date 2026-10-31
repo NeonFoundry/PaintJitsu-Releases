@@ -1,0 +1,38 @@
+name: Publish APK release
+on:
+  push:
+    branches: [main]
+    paths: [PaintJitsu.apk, update.json]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: apk-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Verify APK and publish versioned release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, pathlib, os
+          data = json.loads(pathlib.Path('update.json').read_text())
+          apk = pathlib.Path('PaintJitsu.apk').read_bytes()
+          assert hashlib.sha256(apk).hexdigest() == data['sha256']
+          assert len(apk) == data['sizeBytes']
+          version = int(data['versionCode'])
+          assert 2 <= version <= 2100000000
+          with open(os.environ['GITHUB_ENV'], 'a') as f:
+              f.write(f'RELEASE_TAG=v1.0.{version}\n')
+          PY
+          if gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            echo "Release already exists; preserving its assets."
+          else
+            gh release create "$RELEASE_TAG" PaintJitsu.apk update.json --target "$GITHUB_SHA" --title "PaintJitsu $RELEASE_TAG" --notes "Signed PaintJitsu update. Future updates are available through Updates in the app." --latest
+          fi
