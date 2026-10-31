@@ -28,8 +28,10 @@ jobs:
           assert len(apk) == data['sizeBytes']
           version = int(data['versionCode'])
           assert 2 <= version <= 2100000000
+          tag = f'v1.0.{version}'
           with open(os.environ['GITHUB_ENV'], 'a') as f:
-              f.write(f'RELEASE_TAG=v1.0.{version}\n')
+              f.write(f'RELEASE_TAG={tag}\n')
+          print(f'RELEASE_TAG={tag}')
           PY
           if gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
             echo "Release already exists; preserving its assets."
