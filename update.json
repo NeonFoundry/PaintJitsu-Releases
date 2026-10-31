@@ -1,8 +1,8 @@
 {
-  "versionCode": 101601,
-  "versionName": "1.0.101601",
+  "versionCode": 101701,
+  "versionName": "1.0.101701",
   "apkUrl": "https://raw.githubusercontent.com/NeonFoundry/PaintJitsu-Releases/main/PaintJitsu.apk",
-  "sha256": "895a162887f8061908b4ba4294daa0e0291a906293104c28cd82dbea5a027deb",
+  "sha256": "23a52a9b773cc29ecfa9faf09f979756ef42dcabde6b353db40b5f034386c13c",
   "sizeBytes": 20751881,
   "minSdk": 26
 }
