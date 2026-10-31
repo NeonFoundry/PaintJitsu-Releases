@@ -31,8 +31,11 @@ jobs:
           tag = f'v1.0.{version}'
           with open(os.environ['GITHUB_ENV'], 'a') as f:
               f.write(f'RELEASE_TAG={tag}\n')
-          print(f'RELEASE_TAG={tag}')
+          pathlib.Path('.release-tag').write_text(tag + '\n')
           PY
+          RELEASE_TAG="$(tr -d '\r\n' < .release-tag)"
+          test -n "$RELEASE_TAG"
+          echo "Using release tag: $RELEASE_TAG"
           if gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
             echo "Release already exists; preserving its assets."
           else
